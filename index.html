@@ -1337,11 +1337,53 @@ async function fetchFeed(url) {
       pubDate: it.pubDate,
       source: data.feed?.title || new URL(url).hostname.replace('www.', ''),
       description: stripHtml(it.description || ''),
-      thumbnail: it.thumbnail || it.enclosure?.link || extractImage(it.description) || null
+      thumbnail: pickThumbnail(it)
     }));
   } catch (e) {
     console.warn('Feed failed:', url, e);
     return [];
+  }
+}
+
+function pickThumbnail(item) {
+  // Try multiple sources, in priority order
+  const candidates = [
+    item.thumbnail,
+    item.enclosure?.link,
+    item.enclosure?.url,
+    extractImage(item.content),
+    extractImage(item.description),
+    item['media:thumbnail']?.url,
+    item['media:content']?.url
+  ].filter(Boolean);
+
+  for (const url of candidates) {
+    const cleaned = cleanImageUrl(url);
+    if (cleaned) return proxiedImage(cleaned);
+  }
+  return null;
+}
+
+function cleanImageUrl(url) {
+  if (!url || typeof url !== 'string') return null;
+  // Reject non-image URLs, tracking pixels, and tiny placeholder images
+  if (!/^https?:\/\//i.test(url)) return null;
+  if (/\.(gif|svg)(\?|$)/i.test(url) && /(pixel|tracker|beacon|spacer)/i.test(url)) return null;
+  // Prefer URLs that look like images
+  if (/\.(jpe?g|png|webp|avif)(\?|$)/i.test(url)) return url;
+  // Allow anything with image-like path segments
+  if (/(image|img|photo|media|thumb|content)/i.test(url)) return url;
+  return url; // fallback: try it anyway
+}
+
+function proxiedImage(url) {
+  // Route through images.weserv.nl — a free image proxy that solves hotlink/CORS issues
+  // It also resizes images to a reasonable size, saving bandwidth
+  try {
+    const stripped = url.replace(/^https?:\/\//, '');
+    return `https://images.weserv.nl/?url=${encodeURIComponent(stripped)}&w=800&output=webp&q=80`;
+  } catch (e) {
+    return url;
   }
 }
 
@@ -1489,12 +1531,12 @@ function pickLeadStory() {
     openReader(lead, cat);
   });
 
-  if (state.apiKey) generateLeadSummary();
+  generateLeadSummary();
 }
 
 async function generateLeadSummary() {
   const lead = state.leadStory;
-  if (!lead || !state.apiKey) return;
+  if (!lead) return;
   const summaryEl = document.getElementById('lead-summary');
   if (!summaryEl) return;
 
@@ -1711,11 +1753,6 @@ async function loadHistoryLesson() {
   if (cached && cached.date === today) {
     state.history = cached;
     renderHistory(cached);
-    return;
-  }
-
-  if (!state.apiKey) {
-    renderHistoryFallback();
     return;
   }
 
