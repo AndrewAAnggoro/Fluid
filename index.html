@@ -916,108 +916,7 @@
 
   .reader-error strong { color: var(--ink); display: block; margin-bottom: 4px; }
 
-  /* ---------- API KEY MODAL ---------- */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .modal-backdrop.open { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 32px;
-    max-width: 460px;
-    width: 100%;
-    border: 0.5px solid var(--line-2);
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .modal h3 {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
-  }
-
-  .modal p {
-    font-size: 14px;
-    color: var(--ink-2);
-    line-height: 1.55;
-    margin-bottom: 16px;
-  }
-
-  .modal ol {
-    font-size: 13px;
-    color: var(--ink-2);
-    line-height: 1.7;
-    margin: 0 0 18px 18px;
-    padding: 0;
-  }
-
-  .modal ol li { margin-bottom: 4px; }
-
-  .modal ol a { color: var(--accent); text-decoration: underline; }
-
-  .modal input {
-    width: 100%;
-    background: var(--bg);
-    border: 0.5px solid var(--line-2);
-    border-radius: 6px;
-    padding: 10px 14px;
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--ink);
-    margin-bottom: 16px;
-    outline: none;
-  }
-
-  .modal input:focus { border-color: var(--ink-2); }
-
-  .modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-
-  .btn {
-    padding: 9px 18px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    transition: opacity 0.15s ease;
-  }
-
-  .btn-primary {
-    background: var(--ink);
-    color: var(--bg);
-  }
-
-  .btn-primary:hover { opacity: 0.85; }
-
-  .btn-ghost {
-    color: var(--ink-2);
-  }
-
-  .btn-ghost:hover { color: var(--ink); }
-
-  .modal-hint {
-    font-size: 12px;
-    color: var(--ink-3);
-    margin-top: 12px;
-    line-height: 1.5;
-  }
-
-  /* ---------- EMPTY / ERROR ---------- */
+/* ---------- EMPTY / ERROR ---------- */
   .empty {
     grid-column: 1 / -1;
     padding: 40px 20px;
@@ -1262,29 +1161,6 @@
   </div>
 </aside>
 
-<!-- API KEY MODAL -->
-<div class="modal-backdrop" id="key-modal">
-  <div class="modal">
-    <h3>Set up Gemini API key</h3>
-    <p>Fluid needs your free Google Gemini API key to power the daily history lesson, article summaries, and Ask Fluid chat. Your key will be stored securely on Vercel.</p>
-    <ol>
-      <li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
-      <li>Sign in with your Google account</li>
-      <li>Click the blue <strong>Create API key</strong> button</li>
-      <li>Copy the long key (starts with <code>AIza...</code>)</li>
-      <li>Paste it below</li>
-    </ol>
-    <input type="password" id="key-input" placeholder="AIza…" autocomplete="off" />
-    <div class="modal-actions">
-      <button class="btn btn-ghost" id="key-skip">Skip for now</button>
-      <button class="btn btn-primary" id="key-save">Save Key</button>
-    </div>
-    <div class="modal-hint">
-      Your key is sent securely to Vercel and never stored in your browser. It's used only for API calls to Google Gemini.
-    </div>
-  </div>
-</div>
-
 <script>
 /* =========================================================================
    FLUID — News Aggregator
@@ -1349,7 +1225,6 @@ function init() {
   loadAllNews();
   loadHistoryLesson();
   loadJobs();
-  showKeyModal();
 }
 
 function renderDate() {
@@ -1366,11 +1241,6 @@ function bindEvents() {
   document.getElementById('claude-close').addEventListener('click', closeChat);
   document.getElementById('claude-send').addEventListener('click', sendChat);
   document.getElementById('claude-context-clear').addEventListener('click', clearContext);
-
-  document.getElementById('key-save').addEventListener('click', saveKey);
-  document.getElementById('key-skip').addEventListener('click', () => {
-    document.getElementById('key-modal').classList.remove('open');
-  });
 
   // Reader controls
   document.getElementById('reader-close').addEventListener('click', closeReader);
@@ -1437,34 +1307,6 @@ function toggleTheme() {
 }
 
 /* ---------- API KEY MODAL ---------- */
-function showKeyModal() {
-  document.getElementById('key-modal').classList.add('open');
-}
-
-function saveKey() {
-  const v = document.getElementById('key-input').value.trim();
-  if (!v) return;
-
-  // Show saving state
-  const btn = document.getElementById('key-save');
-  const original = btn.textContent;
-  btn.textContent = 'Saving…';
-  btn.disabled = true;
-
-  // In production, you'd POST this to a secure endpoint that updates the Vercel env var
-  // For now, we store it in sessionStorage as a fallback
-  sessionStorage.setItem('GEMINI_API_KEY', v);
-  state.apiKey = v;
-
-  setTimeout(() => {
-    document.getElementById('key-modal').classList.remove('open');
-    loadHistoryLesson();
-    generateLeadSummary();
-    btn.textContent = original;
-    btn.disabled = false;
-  }, 500);
-}
-
 /* ---------- NEWS LOADING ---------- */
 async function loadAllNews() {
   const cats = Object.keys(CONFIG.FEEDS);
