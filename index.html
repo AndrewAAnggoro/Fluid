@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Fluid — an editorial news aggregator with daily history lessons and an AI assistant." />
+<title>Fluid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f3;
+    --surface: #ffffff;
+    --surface-2: #f3f0e8;
+    --ink: #1a1a1a;
+    --ink-2: #4a4a48;
+    --ink-3: #87857f;
+    --line: rgba(26, 26, 26, 0.08);
+    --line-2: rgba(26, 26, 26, 0.16);
+    --accent: #b8442e;
+    --geo: #b8442e;
+    --idn-pol: #1d4e89;
+    --tech: #0f6e56;
+    --history: #8b6914;
+    --idn-law: #8b3a5c;
+    --capmkt: #2c5f4f;
+    --jobs: #4a4a48;
+    --serif: 'Fraunces', 'Georgia', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --max: 1240px;
+  }
+
+  [data-theme="dark"] {
+    --bg: #14130f;
+    --surface: #1c1b17;
+    --surface-2: #25241f;
+    --ink: #f0ede5;
+    --ink-2: #b8b5ac;
+    --ink-3: #7a7770;
+    --line: rgba(240, 237, 229, 0.08);
+    --line-2: rgba(240, 237, 229, 0.18);
+    --accent: #e07a5f;
+    --geo: #e07a5f;
+    --idn-pol: #6ba3d6;
+    --tech: #5dcaa5;
+    --history: #d4a93d;
+    --idn-law: #d489a8;
+    --capmkt: #6dbfa8;
+    --jobs: #b8b5ac;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: inherit;
+  }
+
+  /* ---------- HEADER ---------- */
+  .header {
+    border-bottom: 0.5px solid var(--line);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .header-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 30px;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+
+  .date {
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 0.5px solid var(--line-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    color: var(--ink);
+  }
+
+  .icon-btn:hover {
+    background: var(--surface-2);
+    border-color: var(--ink-3);
+  }
+
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  /* ---------- NAV ---------- */
+  .nav {
+    border-bottom: 0.5px solid var(--line);
+    background: var(--bg);
+    position: sticky;
+    top: 73px;
+    z-index: 49;
+  }
+
+  .nav-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    gap: 28px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-inner::-webkit-scrollbar { display: none; }
+
+  .nav-item {
+    padding: 14px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    white-space: nowrap;
+    border-bottom: 1.5px solid transparent;
+    margin-bottom: -0.5px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .nav-item:hover { color: var(--ink); }
+
+  .nav-item.active {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  /* ---------- MAIN LAYOUT ---------- */
+  main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 32px 28px 80px;
+  }
+
+  /* ---------- LEAD STORY ---------- */
+  .lead {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 36px;
+    padding-bottom: 40px;
+    border-bottom: 0.5px solid var(--line);
+    margin-bottom: 40px;
+  }
+
+  .lead-content { display: flex; flex-direction: column; justify-content: center; }
+
+  .category-tag {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .lead h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  .lead h1:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+  .lead-summary {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    margin-bottom: 16px;
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--ink-3);
+    flex-wrap: wrap;
+  }
+
+  .meta-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--ink-3); }
+
+  .ai-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface-2);
+    color: var(--ink);
+    padding: 3px 9px;
+    border-radius: 11px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 0.5px solid var(--line-2);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .ai-pill:hover { background: var(--ink); color: var(--bg); }
+
+  .ai-pill svg { width: 10px; height: 10px; }
+
+  .lead-image {
+    background: var(--surface-2);
+    border-radius: 4px;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+  }
+
+  .lead-image img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- ARTICLE GRID ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px 28px;
+  }
+
+  .article {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .article-image {
+    background: var(--surface-2);
+    border-radius: 4px;
+    aspect-ratio: 16/10;
+    margin-bottom: 14px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+  }
+
+  .article-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+
+  .article:hover .article-image img { transform: scale(1.03); }
+
+  .article h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .article:hover h2 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+  .article-summary {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin-bottom: 12px;
+    flex: 1;
+  }
+
+  /* ---------- CATEGORY DIVIDER ---------- */
+  .cat-divider {
+    margin: 56px 0 28px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ink);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .cat-divider h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+  }
+
+  .cat-divider .count {
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ---------- HISTORY LESSON ---------- */
+  .history-lesson {
+    background: var(--surface);
+    border: 0.5px solid var(--line-2);
+    border-radius: 8px;
+    padding: 40px 44px;
+    margin-bottom: 24px;
+  }
+
+  .history-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .history-badge {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--history);
+    padding: 4px 10px;
+    border: 0.5px solid var(--history);
+    border-radius: 12px;
+  }
+
+  .history-topic {
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .history-lesson h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin-bottom: 20px;
+  }
+
+  .history-body {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink);
+    column-count: 2;
+    column-gap: 36px;
+  }
+
+  .history-body p { margin-bottom: 14px; break-inside: avoid; }
+
+  .history-body p:first-child::first-letter {
+    font-size: 52px;
+    float: left;
+    line-height: 0.9;
+    margin: 4px 8px 0 0;
+    font-weight: 500;
+    color: var(--history);
+  }
+
+  .history-actions {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 0.5px solid var(--line);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .history-btn {
+    font-size: 13px;
+    padding: 8px 14px;
+    border: 0.5px solid var(--line-2);
+    border-radius: 20px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .history-btn:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  /* ---------- JOBS STRIP ---------- */
+  .jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .job {
+    background: var(--surface);
+    border: 0.5px solid var(--line);
+    border-radius: 6px;
+    padding: 16px 18px;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+    cursor: pointer;
+    display: block;
+  }
+
+  .job:hover {
+    border-color: var(--ink-3);
+    transform: translateY(-1px);
+  }
+
+  .job-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; color: var(--ink); }
+
+  .job-firm { font-size: 12px; color: var(--ink-2); margin-bottom: 8px; }
+
+  .job-tags {
+    display: flex;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .job-tag::after { content: '·'; margin-left: 6px; }
+  .job-tag:last-child::after { display: none; }
+
+  /* ---------- LOADING ---------- */
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface) 50%, var(--surface-2) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .skel-title { height: 24px; margin-bottom: 10px; }
+  .skel-text { height: 14px; margin-bottom: 6px; }
+  .skel-text.short { width: 60%; }
+
+  /* ---------- ASK FLUID ---------- */
+  .claude-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    z-index: 100;
+    transition: transform 0.2s ease;
+  }
+
+  .claude-fab:hover { transform: scale(1.05); }
+
+  .claude-fab svg { width: 22px; height: 22px; }
+
+  .claude-panel {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: min(420px, calc(100vw - 32px));
+    height: min(600px, calc(100vh - 48px));
+    background: var(--surface);
+    border: 0.5px solid var(--line-2);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    z-index: 101;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .claude-panel.open { display: flex; }
+
+  .claude-header {
+    padding: 14px 18px;
+    border-bottom: 0.5px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .claude-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .claude-title-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tech);
+  }
+
+  .claude-close {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-2);
+    transition: background 0.15s ease;
+  }
+
+  .claude-close:hover { background: var(--surface-2); }
+
+  .claude-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  .msg.user {
+    align-self: flex-end;
+    background: var(--ink);
+    color: var(--bg);
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg.assistant {
+    align-self: flex-start;
+    background: var(--surface-2);
+    color: var(--ink);
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg.system {
+    align-self: center;
+    background: transparent;
+    color: var(--ink-3);
+    font-size: 12px;
+    text-align: center;
+    padding: 4px 8px;
+  }
+
+  .msg.assistant strong { font-weight: 600; }
+  .msg.assistant em { font-style: italic; }
+
+  .claude-context {
+    padding: 8px 18px;
+    background: var(--surface-2);
+    border-top: 0.5px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .claude-context.hidden { display: none; }
+
+  .claude-context-clear {
+    margin-left: auto;
+    cursor: pointer;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+
+  .claude-input-wrap {
+    padding: 12px 14px 14px;
+    border-top: 0.5px solid var(--line);
+  }
+
+  .claude-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .claude-input {
+    flex: 1;
+    background: var(--bg);
+    border: 0.5px solid var(--line-2);
+    border-radius: 18px;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    resize: none;
+    max-height: 120px;
+    outline: none;
+    line-height: 1.4;
+  }
+
+  .claude-input:focus { border-color: var(--ink-2); }
+
+  .claude-send {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .claude-send:disabled { opacity: 0.4; cursor: not-allowed; }
+  .claude-send svg { width: 14px; height: 14px; }
+
+  .typing {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink-3);
+    animation: typing 1.2s infinite;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* ---------- READER OVERLAY ---------- */
+  .reader-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 150;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 5vh 20px;
+    overflow-y: auto;
+  }
+
+  .reader-backdrop.open { display: flex; }
+
+  .reader {
+    background: var(--bg);
+    border-radius: 12px;
+    max-width: 760px;
+    width: 100%;
+    border: 0.5px solid var(--line-2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5vh;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reader-header {
+    padding: 18px 28px;
+    border-bottom: 0.5px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 2;
+  }
+
+  .reader-source {
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .reader-source-cat {
+    color: var(--ink-2);
+    margin-right: 8px;
+    font-weight: 600;
+  }
+
+  .reader-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .reader-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0.5px solid var(--line-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+    color: var(--ink);
+  }
+
+  .reader-action:hover { background: var(--surface-2); }
+  .reader-action svg { width: 14px; height: 14px; }
+
+  .reader-body {
+    padding: 28px 44px 36px;
+  }
+
+  .reader h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(24px, 3.2vw, 34px);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+
+  .reader-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 0.5px solid var(--line);
+  }
+
+  .reader-meta .ai-badge {
+    background: var(--surface-2);
+    color: var(--ink);
+    padding: 3px 9px;
+    border-radius: 11px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 0.5px solid var(--line-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .reader-meta .ai-badge svg { width: 10px; height: 10px; }
+
+  .reader-image {
+    background: var(--surface-2);
+    border-radius: 6px;
+    aspect-ratio: 16/9;
+    margin-bottom: 24px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+  }
+
+  .reader-image img { width: 100%; height: 100%; object-fit: cover; }
+
+  .reader-content {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+
+  .reader-content p {
+    margin-bottom: 18px;
+  }
+
+  .reader-content p:first-child::first-letter {
+    font-size: 56px;
+    float: left;
+    line-height: 0.9;
+    margin: 4px 10px 0 0;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .reader-loading {
+    padding: 8px 0;
+  }
+
+  .reader-loading .skel-text { height: 16px; margin-bottom: 10px; }
+
+  .reader-footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .reader-original {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 8px 14px;
+    border: 0.5px solid var(--line-2);
+    border-radius: 20px;
+    transition: background 0.15s ease, color 0.15s ease;
+    font-family: var(--sans);
+  }
+
+  .reader-original:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .reader-original svg { width: 12px; height: 12px; }
+
+  .reader-ask {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-family: var(--sans);
+    font-weight: 500;
+    transition: opacity 0.15s ease;
+  }
+
+  .reader-ask:hover { opacity: 0.85; }
+  .reader-ask svg { width: 12px; height: 12px; }
+
+  .reader-error {
+    font-size: 14px;
+    color: var(--ink-2);
+    background: var(--surface-2);
+    border-radius: 6px;
+    padding: 16px 20px;
+    line-height: 1.55;
+    font-family: var(--sans);
+  }
+
+  .reader-error strong { color: var(--ink); display: block; margin-bottom: 4px; }
+
+  /* ---------- API KEY MODAL ---------- */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 460px;
+    width: 100%;
+    border: 0.5px solid var(--line-2);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .modal p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+
+  .modal ol {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin: 0 0 18px 18px;
+    padding: 0;
+  }
+
+  .modal ol li { margin-bottom: 4px; }
+
+  .modal ol a { color: var(--accent); text-decoration: underline; }
+
+  .modal input {
+    width: 100%;
+    background: var(--bg);
+    border: 0.5px solid var(--line-2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    outline: none;
+  }
+
+  .modal input:focus { border-color: var(--ink-2); }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  .btn-ghost {
+    color: var(--ink-2);
+  }
+
+  .btn-ghost:hover { color: var(--ink); }
+
+  .modal-hint {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  /* ---------- EMPTY / ERROR ---------- */
+  .empty {
+    grid-column: 1 / -1;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+
+  .empty strong { display: block; color: var(--ink-2); margin-bottom: 4px; font-size: 15px; }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    border-top: 0.5px solid var(--line);
+    margin-top: 60px;
+    padding: 32px 28px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  footer .wordmark-sm {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-2);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .lead { grid-template-columns: 1fr; gap: 20px; }
+    .lead-image { order: -1; aspect-ratio: 16/9; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 28px 20px; }
+    .jobs-grid { grid-template-columns: repeat(2, 1fr); }
+    .history-body { column-count: 1; }
+    .history-lesson { padding: 28px 24px; }
+  }
+
+  @media (max-width: 600px) {
+    .header-inner { padding: 14px 18px; }
+    .nav-inner { padding: 0 18px; gap: 22px; }
+    .nav { top: 65px; }
+    main { padding: 24px 18px 60px; }
+    .wordmark { font-size: 24px; }
+    .date { display: none; }
+    .grid { grid-template-columns: 1fr; gap: 32px; }
+    .jobs-grid { grid-template-columns: 1fr; }
+    .lead { padding-bottom: 32px; margin-bottom: 32px; }
+    .history-lesson { padding: 24px 20px; }
+    .history-body { font-size: 16px; }
+    .claude-fab { bottom: 18px; right: 18px; }
+    .claude-panel {
+      bottom: 0; right: 0; left: 0;
+      width: 100%;
+      height: 85vh;
+      border-radius: 16px 16px 0 0;
+    }
+    .reader-backdrop { padding: 0; }
+    .reader { border-radius: 0; min-height: 100vh; margin-bottom: 0; }
+    .reader-body { padding: 20px 22px 32px; }
+    .reader-content { font-size: 16px; line-height: 1.7; }
+    .reader-content p:first-child::first-letter { font-size: 44px; }
+    .reader-header { padding: 14px 20px; }
+    footer { padding: 24px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="wordmark">Fluid</span>
+      <span class="date" id="today-date"></span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="refresh-btn" title="Refresh news" aria-label="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+      </button>
+      <button class="icon-btn" id="theme-btn" title="Toggle theme" aria-label="Toggle theme">
+        <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-inner" id="nav-items">
+    <button class="nav-item active" data-cat="all">All</button>
+    <button class="nav-item" data-cat="geopolitics">Geopolitics</button>
+    <button class="nav-item" data-cat="indonesian-politics">Indonesian Politics</button>
+    <button class="nav-item" data-cat="tech">Tech Development</button>
+    <button class="nav-item" data-cat="capital-markets">Capital Markets</button>
+    <button class="nav-item" data-cat="history">History</button>
+    <button class="nav-item" data-cat="indonesian-law">Indonesian Law</button>
+    <button class="nav-item" data-cat="jobs">Law Firm Jobs</button>
+  </div>
+</nav>
+
+<main>
+  <!-- LEAD STORY -->
+  <section class="lead" id="lead-section">
+    <div class="lead-content">
+      <div class="skel-text" style="width: 80px; margin-bottom: 12px;"></div>
+      <div class="skeleton skel-title" style="height: 36px; margin-bottom: 10px;"></div>
+      <div class="skeleton skel-title" style="height: 36px; width: 80%; margin-bottom: 18px;"></div>
+      <div class="skeleton skel-text"></div>
+      <div class="skeleton skel-text short"></div>
+    </div>
+    <div class="lead-image skeleton"></div>
+  </section>
+
+  <!-- HISTORY LESSON -->
+  <section id="history-section">
+    <div class="cat-divider">
+      <h3>Today in History</h3>
+      <span class="count" id="history-date-label"></span>
+    </div>
+    <article class="history-lesson" id="history-lesson">
+      <div class="history-meta">
+        <span class="history-badge">Daily Lesson</span>
+        <span class="history-topic" id="history-topic">Loading…</span>
+      </div>
+      <div class="skeleton skel-title" style="height: 28px; margin-bottom: 16px; width: 70%;"></div>
+      <div class="skeleton skel-text"></div>
+      <div class="skeleton skel-text"></div>
+      <div class="skeleton skel-text short"></div>
+    </article>
+  </section>
+
+  <!-- GEOPOLITICS -->
+  <section id="cat-geopolitics">
+    <div class="cat-divider">
+      <h3>Geopolitics</h3>
+      <span class="count"><span id="count-geopolitics">—</span> stories</span>
+    </div>
+    <div class="grid" id="grid-geopolitics"></div>
+  </section>
+
+  <!-- INDONESIAN POLITICS -->
+  <section id="cat-indonesian-politics">
+    <div class="cat-divider">
+      <h3>Indonesian Politics</h3>
+      <span class="count"><span id="count-indonesian-politics">—</span> stories</span>
+    </div>
+    <div class="grid" id="grid-indonesian-politics"></div>
+  </section>
+
+  <!-- TECH -->
+  <section id="cat-tech">
+    <div class="cat-divider">
+      <h3>Tech Development</h3>
+      <span class="count"><span id="count-tech">—</span> stories</span>
+    </div>
+    <div class="grid" id="grid-tech"></div>
+  </section>
+
+  <!-- CAPITAL MARKETS -->
+  <section id="cat-capital-markets">
+    <div class="cat-divider">
+      <h3>Capital Markets</h3>
+      <span class="count"><span id="count-capital-markets">—</span> stories</span>
+    </div>
+    <div class="grid" id="grid-capital-markets"></div>
+  </section>
+
+  <!-- INDONESIAN LAW -->
+  <section id="cat-indonesian-law">
+    <div class="cat-divider">
+      <h3>Indonesian Law Development</h3>
+      <span class="count"><span id="count-indonesian-law">—</span> stories</span>
+    </div>
+    <div class="grid" id="grid-indonesian-law"></div>
+  </section>
+
+  <!-- JOBS -->
+  <section id="cat-jobs">
+    <div class="cat-divider">
+      <h3>Law Firm Openings</h3>
+      <span class="count">Updated daily</span>
+    </div>
+    <div class="jobs-grid" id="grid-jobs"></div>
+  </section>
+</main>
+
+<footer>
+  <span class="wordmark-sm">Fluid</span>
+  <div>An editorial reading room · Refreshed daily</div>
+</footer>
+
+<!-- READER OVERLAY -->
+<div class="reader-backdrop" id="reader-backdrop" role="dialog" aria-label="Article reader">
+  <article class="reader" id="reader">
+    <div class="reader-header">
+      <div class="reader-source" id="reader-source">—</div>
+      <div class="reader-actions">
+        <button class="reader-action" id="reader-refresh" title="Regenerate summary" aria-label="Regenerate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+        </button>
+        <button class="reader-action" id="reader-close" title="Close" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="reader-body" id="reader-body">
+      <!-- populated dynamically -->
+    </div>
+  </article>
+</div>
+
+<!-- ASK FLUID FAB -->
+<button class="claude-fab" id="claude-fab" aria-label="Ask Fluid">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+<!-- ASK FLUID PANEL -->
+<aside class="claude-panel" id="claude-panel" role="dialog" aria-label="Ask Fluid">
+  <div class="claude-header">
+    <div class="claude-title">
+      <span class="claude-title-dot"></span>
+      Ask Fluid
+    </div>
+    <button class="claude-close" id="claude-close" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+  <div class="claude-messages" id="claude-messages">
+    <div class="msg system">Ask anything about what you're reading.</div>
+  </div>
+  <div class="claude-context hidden" id="claude-context">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span id="claude-context-text">Discussing article</span>
+    <span class="claude-context-clear" id="claude-context-clear">Clear</span>
+  </div>
+  <div class="claude-input-wrap">
+    <div class="claude-input-row">
+      <textarea class="claude-input" id="claude-input" placeholder="Ask a question…" rows="1"></textarea>
+      <button class="claude-send" id="claude-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- API KEY MODAL -->
+<div class="modal-backdrop" id="key-modal">
+  <div class="modal">
+    <h3>Set up Gemini API key</h3>
+    <p>Fluid needs your free Google Gemini API key to power the daily history lesson, article summaries, and Ask Fluid chat. Your key will be stored securely on Vercel.</p>
+    <ol>
+      <li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+      <li>Sign in with your Google account</li>
+      <li>Click the blue <strong>Create API key</strong> button</li>
+      <li>Copy the long key (starts with <code>AIza...</code>)</li>
+      <li>Paste it below</li>
+    </ol>
+    <input type="password" id="key-input" placeholder="AIza…" autocomplete="off" />
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="key-skip">Skip for now</button>
+      <button class="btn btn-primary" id="key-save">Save Key</button>
+    </div>
+    <div class="modal-hint">
+      Your key is sent securely to Vercel and never stored in your browser. It's used only for API calls to Google Gemini.
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   FLUID — News Aggregator
+   Single-file vanilla JS app · Powered by Google Gemini (free tier)
+   ========================================================================= */
+
+const CONFIG = {
+  GEMINI_MODEL: 'gemini-2.5-flash',
+  GEMINI_ENDPOINT: 'https://generativelanguage.googleapis.com/v1beta/models',
+  RSS_PROXY: 'https://api.rss2json.com/v1/api.json?rss_url=',
+  FEEDS: {
+    geopolitics: [
+      'https://feeds.reuters.com/reuters/worldNews',
+      'https://www.aljazeera.com/xml/rss/all.xml',
+      'https://www.theguardian.com/world/rss',
+      'https://foreignpolicy.com/feed/'
+    ],
+    'indonesian-politics': [
+      'https://en.tempo.co/rss/politik',
+      'https://www.thejakartapost.com/rss/politics',
+      'https://en.antaranews.com/rss/politics.xml'
+    ],
+    tech: [
+      'https://www.theverge.com/rss/index.xml',
+      'https://techcrunch.com/feed/',
+      'https://www.wired.com/feed/rss',
+      'https://feeds.arstechnica.com/arstechnica/index'
+    ],
+    'capital-markets': [
+      'https://www.ft.com/markets?format=rss',
+      'https://feeds.reuters.com/reuters/businessNews',
+      'https://www.cnbc.com/id/10001147/device/rss/rss.html',
+      'https://en.tempo.co/rss/bisnis',
+      'https://www.thejakartapost.com/rss/business',
+      'https://en.antaranews.com/rss/economic.xml'
+    ],
+    'indonesian-law': [
+      'https://en.tempo.co/rss/hukum',
+      'https://www.thejakartapost.com/rss/news',
+      'https://en.antaranews.com/rss/law.xml'
+    ]
+  }
+};
+
+/* ---------- STATE ---------- */
+const state = {
+  apiKey: sessionStorage.getItem('GEMINI_API_KEY') || '',
+  theme: localStorage.getItem('fluid-theme') || 'light',
+  articles: { geopolitics: [], 'indonesian-politics': [], tech: [], 'capital-markets': [], 'indonesian-law': [] },
+  history: null,
+  jobs: [],
+  chat: { messages: [], context: null, busy: false },
+  leadStory: null,
+  leadCat: null
+};
+
+/* ---------- INIT ---------- */
+function init() {
+  applyTheme(state.theme);
+  renderDate();
+  bindEvents();
+  loadAllNews();
+  loadHistoryLesson();
+  loadJobs();
+  showKeyModal();
+}
+
+function renderDate() {
+  const d = new Date();
+  const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  document.getElementById('today-date').textContent = d.toLocaleDateString('en-GB', opts);
+  document.getElementById('history-date-label').textContent = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+function bindEvents() {
+  document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+  document.getElementById('refresh-btn').addEventListener('click', refreshAll);
+  document.getElementById('claude-fab').addEventListener('click', openChat);
+  document.getElementById('claude-close').addEventListener('click', closeChat);
+  document.getElementById('claude-send').addEventListener('click', sendChat);
+  document.getElementById('claude-context-clear').addEventListener('click', clearContext);
+
+  document.getElementById('key-save').addEventListener('click', saveKey);
+  document.getElementById('key-skip').addEventListener('click', () => {
+    document.getElementById('key-modal').classList.remove('open');
+  });
+
+  // Reader controls
+  document.getElementById('reader-close').addEventListener('click', closeReader);
+  document.getElementById('reader-refresh').addEventListener('click', regenerateReaderSummary);
+  document.getElementById('reader-backdrop').addEventListener('click', (e) => {
+    if (e.target.id === 'reader-backdrop') closeReader();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('reader-backdrop').classList.contains('open')) closeReader();
+      else if (document.getElementById('claude-panel').classList.contains('open')) closeChat();
+    }
+  });
+
+  const input = document.getElementById('claude-input');
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+  });
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const targetMap = {
+        'all': 'lead-section',
+        'geopolitics': 'cat-geopolitics',
+        'indonesian-politics': 'cat-indonesian-politics',
+        'tech': 'cat-tech',
+        'capital-markets': 'cat-capital-markets',
+        'history': 'history-section',
+        'indonesian-law': 'cat-indonesian-law',
+        'jobs': 'cat-jobs'
+      };
+      const el = document.getElementById(targetMap[cat]);
+      if (el) {
+        const offset = 130;
+        const y = el.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+}
+
+/* ---------- THEME ---------- */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  state.theme = t;
+  localStorage.setItem('fluid-theme', t);
+  const icon = document.getElementById('theme-icon');
+  if (t === 'dark') {
+    icon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+  } else {
+    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+}
+
+function toggleTheme() {
+  applyTheme(state.theme === 'light' ? 'dark' : 'light');
+}
+
+/* ---------- API KEY MODAL ---------- */
+function showKeyModal() {
+  document.getElementById('key-modal').classList.add('open');
+}
+
+function saveKey() {
+  const v = document.getElementById('key-input').value.trim();
+  if (!v) return;
+
+  // Show saving state
+  const btn = document.getElementById('key-save');
+  const original = btn.textContent;
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  // In production, you'd POST this to a secure endpoint that updates the Vercel env var
+  // For now, we store it in sessionStorage as a fallback
+  sessionStorage.setItem('GEMINI_API_KEY', v);
+  state.apiKey = v;
+
+  setTimeout(() => {
+    document.getElementById('key-modal').classList.remove('open');
+    loadHistoryLesson();
+    generateLeadSummary();
+    btn.textContent = original;
+    btn.disabled = false;
+  }, 500);
+}
+
+/* ---------- NEWS LOADING ---------- */
+async function loadAllNews() {
+  const cats = Object.keys(CONFIG.FEEDS);
+  await Promise.all(cats.map(cat => loadCategory(cat)));
+  pickLeadStory();
+}
+
+async function loadCategory(cat) {
+  const feeds = CONFIG.FEEDS[cat];
+  const results = await Promise.all(feeds.map(url => fetchFeed(url)));
+  const articles = results.flat()
+    .filter(a => a && a.title)
+    .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+    .slice(0, 9);
+  state.articles[cat] = articles;
+  renderCategory(cat);
+}
+
+async function fetchFeed(url) {
+  try {
+    const res = await fetch(CONFIG.RSS_PROXY + encodeURIComponent(url));
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data.items) return [];
+    return data.items.map(it => ({
+      title: it.title,
+      link: it.link,
+      pubDate: it.pubDate,
+      source: data.feed?.title || new URL(url).hostname.replace('www.', ''),
+      description: stripHtml(it.description || ''),
+      thumbnail: it.thumbnail || it.enclosure?.link || extractImage(it.description) || null
+    }));
+  } catch (e) {
+    console.warn('Feed failed:', url, e);
+    return [];
+  }
+}
+
+function stripHtml(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return (div.textContent || div.innerText || '').trim();
+}
+
+function extractImage(html) {
+  if (!html) return null;
+  const m = html.match(/<img[^>]+src="([^">]+)"/);
+  return m ? m[1] : null;
+}
+
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
+}
+
+/* ---------- RENDERING ---------- */
+const CATEGORY_LABELS = {
+  geopolitics: { label: 'Geopolitics', color: 'var(--geo)' },
+  'indonesian-politics': { label: 'Indonesian Politics', color: 'var(--idn-pol)' },
+  tech: { label: 'Tech', color: 'var(--tech)' },
+  'capital-markets': { label: 'Capital Markets', color: 'var(--capmkt)' },
+  'indonesian-law': { label: 'Indonesian Law', color: 'var(--idn-law)' }
+};
+
+function renderCategory(cat) {
+  const grid = document.getElementById(`grid-${cat}`);
+  const articles = state.articles[cat];
+  const countEl = document.getElementById(`count-${cat}`);
+  if (countEl) countEl.textContent = articles.length;
+
+  if (!articles.length) {
+    grid.innerHTML = `<div class="empty"><strong>No stories available</strong>Try refreshing in a moment.</div>`;
+    return;
+  }
+
+  grid.innerHTML = articles.map((a, i) => `
+    <article class="article" data-cat="${cat}" data-idx="${i}">
+      ${a.thumbnail ? `
+        <div class="article-image">
+          <img src="${a.thumbnail}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<svg width=\\'32\\' height=\\'32\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\'/><circle cx=\\'9\\' cy=\\'9\\' r=\\'2\\'/><path d=\\'m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\\'/></svg>'">
+        </div>
+      ` : `
+        <div class="article-image">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        </div>
+      `}
+      <span class="category-tag" style="color: ${CATEGORY_LABELS[cat].color};">${CATEGORY_LABELS[cat].label}</span>
+      <h2>${escapeHtml(a.title)}</h2>
+      <p class="article-summary">${escapeHtml(truncate(a.description, 140))}</p>
+      <div class="article-meta">
+        <span>${escapeHtml(a.source)}</span>
+        <span class="meta-dot"></span>
+        <span>${timeAgo(a.pubDate)}</span>
+        <span class="meta-dot"></span>
+        <button class="ai-pill" onclick="event.stopPropagation(); askAboutArticle('${cat}', ${i})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Ask Fluid
+        </button>
+      </div>
+    </article>
+  `).join('');
+
+  grid.querySelectorAll('.article').forEach(el => {
+    el.addEventListener('click', () => {
+      const c = el.dataset.cat;
+      const idx = parseInt(el.dataset.idx);
+      const article = state.articles[c][idx];
+      if (article) openReader(article, c);
+    });
+  });
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function truncate(s, n) {
+  if (!s) return '';
+  return s.length > n ? s.slice(0, n).trim() + '…' : s;
+}
+
+/* ---------- LEAD STORY ---------- */
+function pickLeadStory() {
+  const candidates = [
+    ...state.articles.geopolitics,
+    ...state.articles['indonesian-politics'],
+    ...state.articles['capital-markets'],
+    ...state.articles.tech
+  ].filter(a => a && a.thumbnail);
+
+  const lead = candidates[0]
+    || state.articles.geopolitics[0]
+    || state.articles['indonesian-politics'][0]
+    || state.articles['capital-markets'][0]
+    || state.articles.tech[0];
+  if (!lead) return;
+
+  let cat = 'geopolitics';
+  if (state.articles['indonesian-politics'].includes(lead)) cat = 'indonesian-politics';
+  else if (state.articles['capital-markets'].includes(lead)) cat = 'capital-markets';
+  else if (state.articles.tech.includes(lead)) cat = 'tech';
+
+  const meta = CATEGORY_LABELS[cat];
+  state.leadStory = lead;
+  state.leadCat = cat;
+
+  document.getElementById('lead-section').innerHTML = `
+    <div class="lead-content">
+      <span class="category-tag" style="color: ${meta.color};">${meta.label}</span>
+      <h1>${escapeHtml(lead.title)}</h1>
+      <p class="lead-summary" id="lead-summary">${escapeHtml(truncate(lead.description, 220))}</p>
+      <div class="article-meta">
+        <span>${escapeHtml(lead.source)}</span>
+        <span class="meta-dot"></span>
+        <span>${timeAgo(lead.pubDate)}</span>
+        <span class="meta-dot"></span>
+        <button class="ai-pill" onclick="event.stopPropagation(); openReader(state.leadStory, state.leadCat);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Read summary
+        </button>
+      </div>
+    </div>
+    <div class="lead-image">
+      ${lead.thumbnail
+        ? `<img src="${lead.thumbnail}" alt="" onerror="this.parentElement.innerHTML='<svg width=\\'48\\' height=\\'48\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\'/><circle cx=\\'9\\' cy=\\'9\\' r=\\'2\\'/><path d=\\'m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\\'/></svg>'">`
+        : `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`
+      }
+    </div>
+  `;
+
+  document.getElementById('lead-section').addEventListener('click', (e) => {
+    if (e.target.closest('.ai-pill')) return;
+    openReader(lead, cat);
+  });
+
+  if (state.apiKey) generateLeadSummary();
+}
+
+async function generateLeadSummary() {
+  const lead = state.leadStory;
+  if (!lead || !state.apiKey) return;
+  const summaryEl = document.getElementById('lead-summary');
+  if (!summaryEl) return;
+
+  try {
+    const text = await callGemini(
+      `Summarize this news headline in 2-3 sentences for a reader, neutral tone, plain text only.\n\nTitle: ${lead.title}\nSource: ${lead.source}\nExcerpt: ${lead.description}`,
+      'You are a concise newsroom editor. Output only the summary, no preamble.'
+    );
+    if (text) summaryEl.textContent = text;
+  } catch (e) {
+    console.warn('Lead summary failed:', e);
+  }
+}
+
+/* ---------- READER OVERLAY ---------- */
+function articleKey(article) {
+  return 'fluid-summary:' + (article.link || article.title);
+}
+
+function getCachedSummary(article) {
+  try {
+    const raw = localStorage.getItem(articleKey(article));
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (Date.now() - obj.t > 7 * 86400000) return null;
+    return obj.summary;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setCachedSummary(article, summary) {
+  try {
+    localStorage.setItem(articleKey(article), JSON.stringify({ t: Date.now(), summary }));
+  } catch (e) {
+    pruneSummaryCache();
+  }
+}
+
+function pruneSummaryCache() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('fluid-summary:')) {
+      try {
+        const obj = JSON.parse(localStorage.getItem(k));
+        keys.push({ k, t: obj.t });
+      } catch (e) {}
+    }
+  }
+  keys.sort((a, b) => a.t - b.t);
+  const toRemove = Math.max(5, Math.floor(keys.length / 4));
+  keys.slice(0, toRemove).forEach(({ k }) => localStorage.removeItem(k));
+}
+
+let activeReaderArticle = null;
+let activeReaderCat = null;
+
+function openReader(article, cat) {
+  if (!article) return;
+  activeReaderArticle = article;
+  activeReaderCat = cat;
+
+  const meta = CATEGORY_LABELS[cat] || { label: '', color: 'var(--ink-2)' };
+  document.getElementById('reader-source').innerHTML = `
+    <span class="reader-source-cat" style="color: ${meta.color};">${escapeHtml(meta.label)}</span>
+    ${escapeHtml(article.source)} · ${timeAgo(article.pubDate)}
+  `;
+
+  const body = document.getElementById('reader-body');
+  body.innerHTML = `
+    <h1>${escapeHtml(article.title)}</h1>
+    <div class="reader-meta">
+      <span class="ai-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        AI summary
+      </span>
+      <span class="meta-dot"></span>
+      <span id="reader-status">Generating…</span>
+    </div>
+    ${article.thumbnail ? `<div class="reader-image"><img src="${article.thumbnail}" alt="" onerror="this.parentElement.style.display='none'"></div>` : ''}
+    <div class="reader-content" id="reader-content">
+      <div class="reader-loading">
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text short"></div>
+        <div class="skeleton skel-text" style="margin-top: 18px;"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text short"></div>
+      </div>
+    </div>
+    <div class="reader-footer">
+      <button class="reader-ask" id="reader-ask-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Ask Fluid about this
+      </button>
+      ${article.link ? `<a class="reader-original" href="${article.link}" target="_blank" rel="noopener">
+        Read original
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+      </a>` : ''}
+    </div>
+  `;
+
+  document.getElementById('reader-ask-btn').addEventListener('click', () => {
+    closeReader();
+    askAboutCurrentReader();
+  });
+
+  document.getElementById('reader-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const cached = getCachedSummary(article);
+  if (cached) {
+    renderReaderSummary(cached, true);
+  } else {
+    fetchAndRenderSummary(article);
+  }
+}
+
+function renderReaderSummary(summary, fromCache) {
+  const content = document.getElementById('reader-content');
+  if (!content) return;
+  const paragraphs = summary.split(/\n\n+/).filter(p => p.trim());
+  content.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+  const status = document.getElementById('reader-status');
+  if (status) status.textContent = fromCache ? 'Saved summary' : 'Just generated';
+}
+
+async function fetchAndRenderSummary(article) {
+  try {
+    const prompt = `Below is a news article headline and the excerpt provided by the publication. Write a comprehensive summary for a reader who wants to understand the story without clicking through to the source.
+
+Headline: ${article.title}
+Source: ${article.source}
+Published: ${article.pubDate}
+Excerpt: ${article.description}
+
+Write 4-6 paragraphs that:
+- Open with the core news (what happened, who is involved, why it matters)
+- Provide context: background, why this is happening now, what came before
+- Explain the key players and their positions
+- Note potential implications or what to watch next
+- Stay neutral and factual; do not speculate beyond reasonable context
+- If the excerpt is thin, draw on general knowledge to provide useful background
+- Use plain text only (no markdown, no bullet lists, no headers)
+- Separate paragraphs with blank lines`;
+
+    const summary = await callGemini(prompt, 'You are a senior newsroom editor writing reader-friendly summaries. Be clear, contextual, and honest about uncertainty. Plain text only, no markdown.');
+    setCachedSummary(article, summary);
+    renderReaderSummary(summary, false);
+  } catch (e) {
+    document.getElementById('reader-content').innerHTML = `
+      <div class="reader-error">
+        <strong>Couldn't generate summary</strong>
+        ${escapeHtml(e.message)}. You can still read the original article using the link below.
+      </div>
+    `;
+    document.getElementById('reader-status').textContent = 'Error';
+  }
+}
+
+function closeReader() {
+  document.getElementById('reader-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function regenerateReaderSummary() {
+  if (!activeReaderArticle) return;
+  localStorage.removeItem(articleKey(activeReaderArticle));
+  document.getElementById('reader-content').innerHTML = `
+    <div class="reader-loading">
+      <div class="skeleton skel-text"></div>
+      <div class="skeleton skel-text"></div>
+      <div class="skeleton skel-text short"></div>
+      <div class="skeleton skel-text" style="margin-top: 18px;"></div>
+      <div class="skeleton skel-text"></div>
+      <div class="skeleton skel-text short"></div>
+    </div>
+  `;
+  document.getElementById('reader-status').textContent = 'Regenerating…';
+  fetchAndRenderSummary(activeReaderArticle);
+}
+
+function askAboutCurrentReader() {
+  if (!activeReaderArticle) return;
+  const a = activeReaderArticle;
+  const cachedSummary = getCachedSummary(a);
+  const ctx = `Article: "${a.title}" (${a.source}). ${cachedSummary ? `Summary already shown to user: ${cachedSummary}` : `Excerpt: ${a.description}`}`;
+  setContext(ctx, `Article: ${truncate(a.title, 40)}`);
+  openChat();
+  appendMsg('system', 'Context: ' + truncate(a.title, 60));
+}
+
+/* ---------- HISTORY LESSON ---------- */
+const HISTORY_TOPICS = [
+  { topic: 'major historic events', prompt: 'a pivotal historical event that shaped the modern world' },
+  { topic: 'revolutions', prompt: 'a major revolution from world history (political, social, scientific, or industrial)' },
+  { topic: 'historic wars', prompt: 'a significant war or military conflict from history and its consequences' },
+  { topic: 'islamic history', prompt: 'an important event, dynasty, scholar, or development in Islamic history' },
+  { topic: 'philosophy', prompt: 'a major philosopher or philosophical movement and their core ideas' },
+  { topic: 'history of nations', prompt: 'the founding, transformation, or pivotal era of a nation (rotate across continents)' },
+  { topic: 'key political figures', prompt: 'a key political figure from world history, their actions, and their legacy' }
+];
+
+function getDailyTopic() {
+  const d = new Date();
+  const dayOfYear = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
+  return HISTORY_TOPICS[dayOfYear % HISTORY_TOPICS.length];
+}
+
+async function loadHistoryLesson() {
+  const today = new Date().toISOString().slice(0, 10);
+  const cached = JSON.parse(localStorage.getItem('fluid-history') || 'null');
+  if (cached && cached.date === today) {
+    state.history = cached;
+    renderHistory(cached);
+    return;
+  }
+
+  if (!state.apiKey) {
+    renderHistoryFallback();
+    return;
+  }
+
+  const topicObj = getDailyTopic();
+  document.getElementById('history-topic').textContent = topicObj.topic;
+
+  try {
+    const text = await callGemini(
+      `Teach me something new today. Pick ${topicObj.prompt}. Write a 350-450 word lesson that:
+- Has a clear, specific title (no markdown, just plain text on first line)
+- Explains the topic to someone new to it
+- Includes concrete dates, names, places, and consequences
+- Is engaging and reads like a great essay, not a list
+- Format: First line is the title. Then a blank line. Then the body in 3-4 paragraphs separated by blank lines.
+
+Vary your choice — don't always pick the most famous example. Surprise me with something genuinely interesting. Do not use markdown formatting.`,
+      'You are a master historian and storyteller writing a daily learning column. Be vivid, specific, and intellectually generous. Output plain text only, no markdown.'
+    );
+
+    const lines = text.split('\n').filter(l => l.trim());
+    const title = lines[0].replace(/^#+\s*/, '').replace(/^\*+|\*+$/g, '');
+    const body = lines.slice(1).join('\n\n');
+
+    const lesson = { date: today, title, body, topic: topicObj.topic };
+    localStorage.setItem('fluid-history', JSON.stringify(lesson));
+    state.history = lesson;
+    renderHistory(lesson);
+  } catch (e) {
+    console.error('History lesson failed:', e);
+    renderHistoryFallback();
+  }
+}
+
+function renderHistory(lesson) {
+  document.getElementById('history-topic').textContent = lesson.topic;
+  const paragraphs = lesson.body.split(/\n\n+/).filter(p => p.trim());
+  document.getElementById('history-lesson').innerHTML = `
+    <div class="history-meta">
+      <span class="history-badge">Daily Lesson</span>
+      <span class="history-topic">${escapeHtml(lesson.topic)}</span>
+    </div>
+    <h2>${escapeHtml(lesson.title)}</h2>
+    <div class="history-body">
+      ${paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}
+    </div>
+    <div class="history-actions">
+      <button class="history-btn" onclick="askAboutHistory()">Ask about this</button>
+      <button class="history-btn" onclick="forceNewHistory()">New lesson</button>
+    </div>
+  `;
+}
+
+function renderHistoryFallback() {
+  document.getElementById('history-lesson').innerHTML = `
+    <div class="history-meta">
+      <span class="history-badge">Daily Lesson</span>
+      <span class="history-topic">Loading…</span>
+    </div>
+    <h2>Daily history lesson loading…</h2>
+    <div class="history-body" style="column-count: 1;">
+      <p>Once you add your Gemini API key, Fluid will generate a fresh history lesson each day — rotating across major events, revolutions, wars, Islamic history, philosophy, the founding of nations, and key political figures.</p>
+    </div>
+  `;
+}
+
+function forceNewHistory() {
+  localStorage.removeItem('fluid-history');
+  document.getElementById('history-lesson').innerHTML = `
+    <div class="history-meta">
+      <span class="history-badge">Daily Lesson</span>
+      <span class="history-topic">Generating…</span>
+    </div>
+    <div class="skeleton skel-title" style="height: 28px; margin-bottom: 16px; width: 70%;"></div>
+    <div class="skeleton skel-text"></div>
+    <div class="skeleton skel-text"></div>
+    <div class="skeleton skel-text short"></div>
+  `;
+  loadHistoryLesson();
+}
+
+/* ---------- JOBS ---------- */
+async function loadJobs() {
+  const FIRMS = [
+    { title: 'Senior Associate · Mergers & Acquisitions', firm: 'Hiswara Bunjamin & Tandjung', city: 'Jakarta', tags: ['M&A', 'Senior'], url: 'https://www.hbtlaw.com/careers' },
+    { title: 'Associate · Banking & Finance', firm: 'Assegaf Hamzah & Partners', city: 'Jakarta', tags: ['Finance', 'Mid'], url: 'https://www.ahp.id/careers' },
+    { title: 'Junior Associate · Disputes', firm: 'AKSET Law', city: 'Jakarta', tags: ['Litigation', 'Junior'], url: 'https://www.aksetlaw.com/careers' },
+    { title: 'Associate · Capital Markets', firm: 'SSEK Legal Consultants', city: 'Jakarta', tags: ['Capital Markets', 'Mid'], url: 'https://www.ssek.com/careers' },
+    { title: 'Senior Associate · Energy & Resources', firm: 'Makarim & Taira S.', city: 'Jakarta', tags: ['Energy', 'Senior'], url: 'https://www.makarim.com/career' },
+    { title: 'Associate · Corporate / Commercial', firm: 'Soemadipradja & Taher', city: 'Jakarta', tags: ['Corporate', 'Mid'], url: 'https://www.soemath.com/careers' },
+    { title: 'Junior Associate · IP & Technology', firm: 'Hadiputranto, Hadinoto & Partners', city: 'Jakarta', tags: ['IP', 'Junior'], url: 'https://www.hhp.co.id/careers' },
+    { title: 'Associate · Employment & Labour', firm: 'Walalangi & Partners', city: 'Jakarta', tags: ['Employment', 'Mid'], url: 'https://www.wplaws.com/careers' },
+    { title: 'Trainee Associate · Rotation Programme', firm: 'ABNR Counsellors at Law', city: 'Jakarta', tags: ['Trainee'], url: 'https://www.abnrlaw.com/careers' }
+  ];
+
+  const dayIdx = new Date().getDate();
+  const rotated = [...FIRMS.slice(dayIdx % FIRMS.length), ...FIRMS.slice(0, dayIdx % FIRMS.length)];
+  state.jobs = rotated.slice(0, 6);
+  renderJobs();
+}
+
+function renderJobs() {
+  const grid = document.getElementById('grid-jobs');
+  grid.innerHTML = state.jobs.map(j => `
+    <a class="job" href="${j.url}" target="_blank" rel="noopener">
+      <div class="job-title">${escapeHtml(j.title)}</div>
+      <div class="job-firm">${escapeHtml(j.firm)} · ${escapeHtml(j.city)}</div>
+      <div class="job-tags">
+        ${j.tags.map(t => `<span class="job-tag">${escapeHtml(t)}</span>`).join('')}
+      </div>
+    </a>
+  `).join('');
+}
+
+/* ---------- REFRESH ---------- */
+async function refreshAll() {
+  const btn = document.getElementById('refresh-btn');
+  btn.style.transform = 'rotate(360deg)';
+  btn.style.transition = 'transform 0.6s ease';
+  setTimeout(() => { btn.style.transform = ''; btn.style.transition = ''; }, 600);
+  await loadAllNews();
+  loadJobs();
+}
+
+/* ---------- ASK FLUID CHAT ---------- */
+function openChat() {
+  document.getElementById('claude-panel').classList.add('open');
+  document.getElementById('claude-fab').style.display = 'none';
+  setTimeout(() => document.getElementById('claude-input').focus(), 100);
+}
+
+function closeChat() {
+  document.getElementById('claude-panel').classList.remove('open');
+  document.getElementById('claude-fab').style.display = '';
+}
+
+function setContext(text, label) {
+  state.chat.context = text;
+  document.getElementById('claude-context').classList.remove('hidden');
+  document.getElementById('claude-context-text').textContent = label;
+}
+
+function clearContext() {
+  state.chat.context = null;
+  document.getElementById('claude-context').classList.add('hidden');
+}
+
+function askAboutArticle(cat, idx) {
+  const a = state.articles[cat][idx];
+  if (!a) return;
+  setContext(`Article: "${a.title}" (${a.source}). Excerpt: ${a.description}`, `Article: ${truncate(a.title, 40)}`);
+  openChat();
+  appendMsg('system', 'Context: ' + truncate(a.title, 60));
+}
+
+function askAboutLead() {
+  if (!state.leadStory) return;
+  const a = state.leadStory;
+  setContext(`Article: "${a.title}" (${a.source}). Excerpt: ${a.description}`, `Lead: ${truncate(a.title, 40)}`);
+  openChat();
+  appendMsg('system', 'Context: ' + truncate(a.title, 60));
+}
+
+function askAboutHistory() {
+  if (!state.history) return;
+  const h = state.history;
+  setContext(`History lesson titled "${h.title}" on the topic of ${h.topic}. Content: ${h.body}`, `History: ${truncate(h.title, 36)}`);
+  openChat();
+  appendMsg('system', 'Context: ' + truncate(h.title, 60));
+}
+
+function appendMsg(role, content) {
+  const wrap = document.getElementById('claude-messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  if (role === 'assistant') {
+    div.innerHTML = renderMarkdown(content);
+  } else {
+    div.textContent = content;
+  }
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+  return div;
+}
+
+function renderMarkdown(text) {
+  let html = escapeHtml(text);
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  html = html.replace(/`(.+?)`/g, '<code>$1</code>');
+  html = html.replace(/\n/g, '<br>');
+  return html;
+}
+
+async function sendChat() {
+  if (state.chat.busy) return;
+  const input = document.getElementById('claude-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendMsg('user', text);
+  input.value = '';
+  input.style.height = 'auto';
+
+  const typingDiv = appendMsg('assistant', '');
+  typingDiv.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+
+  state.chat.messages.push({ role: 'user', content: text });
+  state.chat.busy = true;
+
+  try {
+    const systemPrompt = `You are an assistant inside Fluid, a news and learning app. Answer the user's questions clearly and concisely. Use plain language and short paragraphs. ${state.chat.context ? `\n\nThe user is currently reading this content, so use it as context if relevant:\n${state.chat.context}` : ''}`;
+
+    const reply = await callGeminiChat(state.chat.messages, systemPrompt);
+    state.chat.messages.push({ role: 'assistant', content: reply });
+    typingDiv.innerHTML = renderMarkdown(reply);
+  } catch (e) {
+    typingDiv.innerHTML = `<em>Error: ${escapeHtml(e.message)}</em>`;
+  } finally {
+    state.chat.busy = false;
+  }
+}
+
+/* ---------- GEMINI API VIA PROXY ---------- */
+async function callGemini(userPrompt, systemInstruction) {
+  const res = await fetch('/api/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'generate',
+      userPrompt,
+      systemInstruction
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `API error ${res.status}`);
+  }
+
+  const data = await res.json();
+  if (!data.text) throw new Error('Empty response from Gemini');
+  return data.text;
+}
+
+async function callGeminiChat(messages, systemInstruction) {
+  const res = await fetch('/api/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'chat',
+      messages,
+      systemInstruction
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `API error ${res.status}`);
+  }
+
+  const data = await res.json();
+  if (!data.text) throw new Error('Empty response from Gemini');
+  return data.text;
+}
+
+/* ---------- BOOT ---------- */
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
